@@ -8,27 +8,38 @@ ________________________________________
   
   
 
-## *1. Loading and preprocessing the data*
-_____________________________________
+### *1. Loading and preprocessing the data*
+__________________________________________
 
-Testing text to see if it works
-
-
-
-## *2. What is mean total number of steps taken per day?*
-____________________________________________________
-
+The following section will load data.
+```{R LoadData}
+raw_data <- read.csv("activity.csv")
+summary(raw_data)
+```
 
 
-## *3. What is the average daily activity pattern?*
-______________________________________________
+### *2. What is mean total number of steps taken per day?*
+__________________________________________
 
 
 
-## *4. Imputing missing values*
-__________________________
+
+### *3. What is the average daily activity pattern?*
+__________________________________________
 
 
 
-## *5. Are there differences in activity patterns between weekdays and weekends?*
-__________________________________________________________________
+
+### *4. Imputing missing values*
+__________________________________________
+
+
+
+
+### *5. Are there differences in activity patterns between weekdays and weekends?*
+__________________________________________
+
+
+
+
+
