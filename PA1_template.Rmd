@@ -4,22 +4,31 @@ output:
   html_document:
     keep_md: true
 ---
+________________________________________  
+  
+  
 
+## *1. Loading and preprocessing the data*
+_____________________________________
 
-## Loading and preprocessing the data
-
-
-
-## What is mean total number of steps taken per day?
-
-
-
-## What is the average daily activity pattern?
+Testing text to see if it works
 
 
 
-## Imputing missing values
+## *2. What is mean total number of steps taken per day?*
+____________________________________________________
 
 
 
-## Are there differences in activity patterns between weekdays and weekends?
+## *3. What is the average daily activity pattern?*
+______________________________________________
+
+
+
+## *4. Imputing missing values*
+__________________________
+
+
+
+## *5. Are there differences in activity patterns between weekdays and weekends?*
+__________________________________________________________________
