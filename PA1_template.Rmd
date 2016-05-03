@@ -25,12 +25,12 @@ __________________________________________
 ```{R Calualation Part 1}
 total_steps_day <- tapply(data$steps,data$date, sum, na.rm = TRUE)
 qplot(total_steps_day, binwidth=1000,xlab = "total number of steps taken each day", ylab = "Frequency")
-result1 <- mean(total_steps_day, na.rm = TRUE)
-result2 <- median(total_steps_day, na.rm = TRUE)
+data_mean <- mean(total_steps_day, na.rm = TRUE)
+data_median <- median(total_steps_day, na.rm = TRUE)
 ```
 
-The mean of steps taken each day is : `r result1`   
-The median steps taken for each day is : `r result2`
+The mean of steps taken each day is : `r data_mean`   
+The median steps taken for each day is : `r data_median`
 
 ### *3. What is the average daily activity pattern?*
 __________________________________________
@@ -48,8 +48,20 @@ The interval that has the maximum number of steps is: `r max$interval`
 
 ### *4. Imputing missing values*
 __________________________________________
+```{R Calculation Part 3}
+result4a <- sum(is.na(data$steps))
 
 
+```
+
+Total number of missing values is `r result4a`.
+
+```{R}
+x <- data
+x[is.na(data$steps),] <- data_mean
+#data[is.na(data$steps),] <- data_mean
+
+```
 
 
 ### *5. Are there differences in activity patterns between weekdays and weekends?*

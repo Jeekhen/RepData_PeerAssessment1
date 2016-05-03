@@ -32,8 +32,8 @@ qplot(total_steps_day, binwidth=1000,xlab = "total number of steps taken each da
 ![](PA1_template_files/figure-html/Calualation Part 1-1.png)
 
 ```r
-result1 <- mean(total_steps_day, na.rm = TRUE)
-result2 <- median(total_steps_day, na.rm = TRUE)
+data_mean <- mean(total_steps_day, na.rm = TRUE)
+data_median <- median(total_steps_day, na.rm = TRUE)
 ```
 
 The mean of steps taken each day is : 9354.2295082   
@@ -60,13 +60,32 @@ print(max)
 ## 104      835 206.1698
 ```
 
-The intervals that has the maximum number of steps is/are : 835   
+The interval that has the maximum number of steps is: 835   
 
 
 ### *4. Imputing missing values*
 __________________________________________
 
+```r
+result4a <- sum(is.na(data$steps))
+```
 
+Total number of missing values is 2304.
+
+
+```r
+x <- data
+x[is.na(data$steps),] <- data_mean
+```
+
+```
+## Warning in `[<-.factor`(`*tmp*`, iseq, value = c(9354.22950819672,
+## 9354.22950819672, : invalid factor level, NA generated
+```
+
+```r
+#data[is.na(data$steps),] <- data_mean
+```
 
 
 ### *5. Are there differences in activity patterns between weekdays and weekends?*
