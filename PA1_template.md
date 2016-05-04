@@ -74,17 +74,49 @@ Total number of missing values is 2304.
 
 
 ```r
-x <- data
-x[is.na(data$steps),] <- data_mean
+insert_func <- function(interval,steps){
+        if(is.na(steps)){
+              average[which(average$interval==interval),"steps"]
+        }else{
+              steps
+        }
+}
+```
+
+
+
+```r
+filled_data <- data
+filled_data$steps  <- mapply(insert_func,filled_data$interval, filled_data$steps)
+```
+
+Create Histogram
+
+
+```r
+totalSteps <- tapply(filled_data$steps, filled_data$date, FUN=sum)
+qplot(totalSteps, binwidth = 1000, xlab = "total number of steps taken each day")
+```
+
+![](PA1_template_files/figure-html/create histogram-1.png)
+
+
+```r
+na_mean <- mean(totalSteps, na.rm = TRUE)
+na_mean
 ```
 
 ```
-## Warning in `[<-.factor`(`*tmp*`, iseq, value = c(9354.22950819672,
-## 9354.22950819672, : invalid factor level, NA generated
+## [1] 10766.19
 ```
 
 ```r
-#data[is.na(data$steps),] <- data_mean
+na_median <- median(totalSteps, na.rm=TRUE)
+na_median
+```
+
+```
+## [1] 10766.19
 ```
 
 

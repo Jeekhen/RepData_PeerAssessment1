@@ -56,10 +56,37 @@ result4a <- sum(is.na(data$steps))
 
 Total number of missing values is `r result4a`.
 
-```{R}
-x <- data
-x[is.na(data$steps),] <- data_mean
-#data[is.na(data$steps),] <- data_mean
+```{R Devise a inserting strategy}
+insert_func <- function(interval,steps){
+        if(is.na(steps)){
+              average[which(average$interval==interval),"steps"]
+        }else{
+              steps
+        }
+}
+```
+
+
+```{R inserting value}
+filled_data <- data
+filled_data$steps  <- mapply(insert_func,filled_data$interval, filled_data$steps)
+
+```
+
+Create Histogram
+
+```{r create histogram}
+totalSteps <- tapply(filled_data$steps, filled_data$date, FUN=sum)
+qplot(totalSteps, binwidth = 1000, xlab = "total number of steps taken each day")
+
+```
+
+```{r}
+
+na_mean <- mean(totalSteps, na.rm = TRUE)
+na_mean
+na_median <- median(totalSteps, na.rm=TRUE)
+na_median
 
 ```
 
