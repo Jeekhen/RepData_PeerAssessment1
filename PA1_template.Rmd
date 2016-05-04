@@ -22,22 +22,27 @@ data <- read.csv("activity.csv")
 
 ### *2. What is mean total number of steps taken per day?*
 __________________________________________
-```{R Calualation Part 1}
+```{r Calualation: Mean total steps per day}
 total_steps_day <- tapply(data$steps,data$date, sum, na.rm = TRUE)
 qplot(total_steps_day, binwidth=1000,xlab = "total number of steps taken each day", ylab = "Frequency")
 data_mean <- mean(total_steps_day, na.rm = TRUE)
 data_median <- median(total_steps_day, na.rm = TRUE)
 ```
 
-The mean of steps taken each day is : `r data_mean`   
-The median steps taken for each day is : `r data_median`
-
+The mean of steps taken each day is : `r round(data_mean)`   
+The median steps taken for each day is : `r round(data_median)`
+  
+  
 ### *3. What is the average daily activity pattern?*
 __________________________________________
-```{R Calulation Part 2}
-average <- aggregate(list(steps = data$steps), by = list(interval = data$interval), FUN=mean, na.rm=TRUE)
+```{r Calulation: avg daily activity pattern}
+average <- aggregate(list(steps = data$steps), by = 
+                             list(interval = data$interval), FUN=mean, 
+                     na.rm=TRUE)
 
-ggplot(average, aes(interval, steps)) + geom_line(color = "blue", size = 0.7) + labs(title = "Average Daily Activity Chart", x = "5-minute intervals", y = "Average Number of Steps Taken")
+ggplot(average, aes(interval, steps)) + geom_line(color = "blue", size = 0.7) + 
+        labs(title = "Average Daily Activity Chart", x = "5-minute intervals",
+             y = "Average Number of Steps Taken")
 
 max <- average[which.max(average$steps),]
 print(max)
@@ -45,18 +50,17 @@ print(max)
 
 The interval that has the maximum number of steps is: `r max$interval`   
 
-
+  
+  
 ### *4. Imputing missing values*
 __________________________________________
-```{R Calculation Part 3}
+```{r Calculation: how many missing values}
 result4a <- sum(is.na(data$steps))
-
-
 ```
 
 Total number of missing values is `r result4a`.
 
-```{R Devise a inserting strategy}
+```{r Devise a inserting strategy}
 insert_func <- function(interval,steps){
         if(is.na(steps)){
               average[which(average$interval==interval),"steps"]
@@ -66,33 +70,55 @@ insert_func <- function(interval,steps){
 }
 ```
 
+The above code is for inserting value into missing fields. If value is miss, 
+insert average daily steps for that interval. If value already exist, use 
+original value.
 
-```{R inserting value}
+```{r Inserting value for missing field}
 filled_data <- data
 filled_data$steps  <- mapply(insert_func,filled_data$interval, filled_data$steps)
 
 ```
 
-Create Histogram
+Create Histogram for new total number of steps.
 
-```{r create histogram}
+```{r Create histogram}
 totalSteps <- tapply(filled_data$steps, filled_data$date, FUN=sum)
 qplot(totalSteps, binwidth = 1000, xlab = "total number of steps taken each day")
 
 ```
 
-```{r}
 
-na_mean <- mean(totalSteps, na.rm = TRUE)
-na_mean
+```{r Calculating new mean and median}
+
+na_mean <- mean(totalSteps, na.rm = TRUE)  
+trunc(na_mean)
 na_median <- median(totalSteps, na.rm=TRUE)
-na_median
-
+trunc(na_median)
 ```
-
+The new mean is : `r trunc(na_mean)`  
+The new median is : `r trunc(na_median)`
 
 ### *5. Are there differences in activity patterns between weekdays and weekends?*
 __________________________________________
+
+```{r}
+filled_data$date <- as.Date(filled_data$date)
+filled_data$day <- lapply(filled_data$date, FUN= function(date) {
+        if(date %in% c("Monday", "Tuesday", "Wednesday", 
+                       "Thursday", "Friday")) "Weekday"
+        else{
+                "Weekend"
+        }
+})
+
+```
+
+```{r}
+averages <- aggregate(steps ~ interval + day, data = filled.data, mean)
+ggplot(averages, aes(interval, steps)) + geom_line() + facet_grid(day ~ .) + 
+    xlab("5-minute interval") + ylab("Number of steps")
+```
 
 
 
