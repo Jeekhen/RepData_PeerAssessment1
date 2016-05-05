@@ -5,10 +5,10 @@ output:
     keep_md: true
 ---
 ________________________________________  
- ```{R Load Library}
- library(ggplot2)
- ```
-  
+```{r Load Library}
+library(ggplot2)
+```
+Load neccesary libraries for ploting
 
 ### *1. Loading and preprocessing the data*
 __________________________________________
@@ -26,7 +26,9 @@ __________________________________________
 total_steps_day <- tapply(data$steps,data$date, sum, na.rm = TRUE)
 qplot(total_steps_day, binwidth=1000,xlab = "total number of steps taken each day", ylab = "Frequency")
 data_mean <- mean(total_steps_day, na.rm = TRUE)
+trunc(data_mean)
 data_median <- median(total_steps_day, na.rm = TRUE)
+trunc(data_median)
 ```
 
 The mean of steps taken each day is : `r round(data_mean)`   
@@ -70,7 +72,7 @@ insert_func <- function(interval,steps){
 }
 ```
 
-The above code is for inserting value into missing fields. If value is miss, 
+The above code is for inserting value into missing fields. If value is missing, 
 insert average daily steps for that interval. If value already exist, use 
 original value.
 
@@ -97,29 +99,36 @@ na_median <- median(totalSteps, na.rm=TRUE)
 trunc(na_median)
 ```
 The new mean is : `r trunc(na_mean)`  
-The new median is : `r trunc(na_median)`
+The new median is : `r trunc(na_median)`  
+  
+There is a difference between the mean and the median value of imputed and non-imputed value as formula for both mean and median value involves the division operator. Any value introduced into division operator will cause data to be skewed.
 
 ### *5. Are there differences in activity patterns between weekdays and weekends?*
 __________________________________________
 
-```{r}
+```{r Inserting day column}
 filled_data$date <- as.Date(filled_data$date)
-filled_data$day <- lapply(filled_data$date, FUN= function(date) {
-        if(date %in% c("Monday", "Tuesday", "Wednesday", 
-                       "Thursday", "Friday")) "Weekday"
-        else{
-                "Weekend"
-        }
+filled_data$day <- sapply(filled_data$date, FUN= function(date) {
+        if(weekdays(date) %in% c("Monday", "Tuesday", "Wednesday", 
+                       "Thursday", "Friday")) "weekday"
+        else if(weekdays(date) %in% c("Saturday", "Sunday")) "weekend"
+        else NA
 })
 
 ```
 
-```{r}
-averages <- aggregate(steps ~ interval + day, data = filled.data, mean)
-ggplot(averages, aes(interval, steps)) + geom_line() + facet_grid(day ~ .) + 
-    xlab("5-minute interval") + ylab("Number of steps")
-```
+The above code is used to insert an extra column called day into imputed dataset to indicate if the date is a weekend or a weeday.  
 
+```{r Calulating average steps across interval and day}
+average <- aggregate(steps ~  interval + day, data = filled_data, mean)
+ggplot(average, aes(interval, steps)) + geom_line() + 
+        facet_grid(day ~ .) + xlab("5-minute interval") +
+        ylab("Number of steps")
+```
+  
+  
+  
+------------------------------------ **THE END** -------------------------------------
 
 
 

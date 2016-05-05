@@ -1,14 +1,10 @@
 # Reproducible Research: Peer Assessment 1
 ________________________________________  
- 
- ```r
- library(ggplot2)
- ```
- 
- ```
- ## Warning: package 'ggplot2' was built under R version 3.2.5
- ```
-  
+
+```r
+library(ggplot2)
+```
+Load neccesary libraries for ploting
 
 ### *1. Loading and preprocessing the data*
 __________________________________________
@@ -29,11 +25,24 @@ total_steps_day <- tapply(data$steps,data$date, sum, na.rm = TRUE)
 qplot(total_steps_day, binwidth=1000,xlab = "total number of steps taken each day", ylab = "Frequency")
 ```
 
-![](PA1_template_files/figure-html/Calualation: Mean total steps per day-1.png)
+![](PA1_template_files/figure-html/Calualation: Mean total steps per day-1.png)<!-- -->
 
 ```r
 data_mean <- mean(total_steps_day, na.rm = TRUE)
+trunc(data_mean)
+```
+
+```
+## [1] 9354
+```
+
+```r
 data_median <- median(total_steps_day, na.rm = TRUE)
+trunc(data_median)
+```
+
+```
+## [1] 10395
 ```
 
 The mean of steps taken each day is : 9354   
@@ -53,7 +62,7 @@ ggplot(average, aes(interval, steps)) + geom_line(color = "blue", size = 0.7) +
              y = "Average Number of Steps Taken")
 ```
 
-![](PA1_template_files/figure-html/Calulation: avg daily activity pattern-1.png)
+![](PA1_template_files/figure-html/Calulation: avg daily activity pattern-1.png)<!-- -->
 
 ```r
 max <- average[which.max(average$steps),]
@@ -89,7 +98,7 @@ insert_func <- function(interval,steps){
 }
 ```
 
-The above code is for inserting value into missing fields. If value is miss, 
+The above code is for inserting value into missing fields. If value is missing, 
 insert average daily steps for that interval. If value already exist, use 
 original value.
 
@@ -107,7 +116,7 @@ totalSteps <- tapply(filled_data$steps, filled_data$date, FUN=sum)
 qplot(totalSteps, binwidth = 1000, xlab = "total number of steps taken each day")
 ```
 
-![](PA1_template_files/figure-html/Create histogram-1.png)
+![](PA1_template_files/figure-html/Create histogram-1.png)<!-- -->
 
 
 
@@ -129,11 +138,39 @@ trunc(na_median)
 ## [1] 10766
 ```
 The new mean is : 1.0766\times 10^{4}  
-The new median is : 1.0766\times 10^{4}
+The new median is : 1.0766\times 10^{4}  
+  
+There is a difference between the mean and the median value of imputed and non-imputed value as formula for both mean and median value involves the division operator. Any value introduced into division operator will cause data to be skewed.
 
 ### *5. Are there differences in activity patterns between weekdays and weekends?*
 __________________________________________
 
+
+```r
+filled_data$date <- as.Date(filled_data$date)
+filled_data$day <- sapply(filled_data$date, FUN= function(date) {
+        if(weekdays(date) %in% c("Monday", "Tuesday", "Wednesday", 
+                       "Thursday", "Friday")) "weekday"
+        else if(weekdays(date) %in% c("Saturday", "Sunday")) "weekend"
+        else NA
+})
+```
+
+The above code is used to insert an extra column called day into imputed dataset to indicate if the date is a weekend or a weeday.  
+
+
+```r
+average <- aggregate(steps ~  interval + day, data = filled_data, mean)
+ggplot(average, aes(interval, steps)) + geom_line() + 
+        facet_grid(day ~ .) + xlab("5-minute interval") +
+        ylab("Number of steps")
+```
+
+![](PA1_template_files/figure-html/Calulating average steps across interval and day-1.png)<!-- -->
+  
+  
+  
+------------------------------------ **THE END** -------------------------------------
 
 
 
