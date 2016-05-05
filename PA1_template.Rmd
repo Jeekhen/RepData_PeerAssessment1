@@ -5,7 +5,8 @@ output:
     keep_md: true
 ---
 ________________________________________  
-```{r Load Library}
+# ```{r Load Library}
+```{r}
 library(ggplot2)
 ```
 Load neccesary libraries for ploting
@@ -14,7 +15,9 @@ Load neccesary libraries for ploting
 __________________________________________
 
 The following section will load data.
-```{R LoadData}
+```{r}
+# ```{R LoadData}
+
 unzip(zipfile = "activity.zip")
 data <- read.csv("activity.csv")
 ```
@@ -22,7 +25,9 @@ data <- read.csv("activity.csv")
 
 ### *2. What is mean total number of steps taken per day?*
 __________________________________________
-```{r Calualation: Mean total steps per day}
+```{r}
+# ```{r Calualation: Mean total steps per day}
+
 total_steps_day <- tapply(data$steps,data$date, sum, na.rm = TRUE)
 qplot(total_steps_day, binwidth=1000,xlab = "total number of steps taken each day", ylab = "Frequency")
 data_mean <- mean(total_steps_day, na.rm = TRUE)
@@ -37,7 +42,9 @@ The median steps taken for each day is : `r round(data_median)`
   
 ### *3. What is the average daily activity pattern?*
 __________________________________________
-```{r Calulation: avg daily activity pattern}
+
+```{r}
+# ```{r Calulation: avg daily activity pattern}
 average <- aggregate(list(steps = data$steps), by = 
                              list(interval = data$interval), FUN=mean, 
                      na.rm=TRUE)
@@ -56,13 +63,17 @@ The interval that has the maximum number of steps is: `r max$interval`
   
 ### *4. Imputing missing values*
 __________________________________________
-```{r Calculation: how many missing values}
+```{r}
+# ```{r Calculation: how many missing values}
+
 result4a <- sum(is.na(data$steps))
 ```
 
 Total number of missing values is `r result4a`.
 
-```{r Devise a inserting strategy}
+```{r}
+# ```{r Devise a inserting strategy}
+
 insert_func <- function(interval,steps){
         if(is.na(steps)){
               average[which(average$interval==interval),"steps"]
@@ -76,7 +87,9 @@ The above code is for inserting value into missing fields. If value is missing,
 insert average daily steps for that interval. If value already exist, use 
 original value.
 
-```{r Inserting value for missing field}
+```{r}
+# ```{r Inserting value for missing field}
+
 filled_data <- data
 filled_data$steps  <- mapply(insert_func,filled_data$interval, filled_data$steps)
 
@@ -84,14 +97,16 @@ filled_data$steps  <- mapply(insert_func,filled_data$interval, filled_data$steps
 
 Create Histogram for new total number of steps.
 
-```{r Create histogram}
+```{r}
+# ```{r Create histogram}
+
 totalSteps <- tapply(filled_data$steps, filled_data$date, FUN=sum)
 qplot(totalSteps, binwidth = 1000, xlab = "total number of steps taken each day")
 
 ```
 
-
-```{r Calculating new mean and median}
+```{r}
+# ```{r Calculating new mean and median}
 
 na_mean <- mean(totalSteps, na.rm = TRUE)  
 trunc(na_mean)
@@ -106,7 +121,8 @@ There is a difference between the mean and the median value of imputed and non-i
 ### *5. Are there differences in activity patterns between weekdays and weekends?*
 __________________________________________
 
-```{r Inserting day column}
+```{r}
+# ```{r Inserting day column}
 filled_data$date <- as.Date(filled_data$date)
 filled_data$day <- sapply(filled_data$date, FUN= function(date) {
         if(weekdays(date) %in% c("Monday", "Tuesday", "Wednesday", 
@@ -119,7 +135,8 @@ filled_data$day <- sapply(filled_data$date, FUN= function(date) {
 
 The above code is used to insert an extra column called day into imputed dataset to indicate if the date is a weekend or a weeday.  
 
-```{r Calulating average steps across interval and day}
+```{r}
+# ```{r Calulating average steps across interval and day}
 average <- aggregate(steps ~  interval + day, data = filled_data, mean)
 ggplot(average, aes(interval, steps)) + geom_line() + 
         facet_grid(day ~ .) + xlab("5-minute interval") +

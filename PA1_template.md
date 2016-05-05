@@ -1,5 +1,6 @@
 # Reproducible Research: Peer Assessment 1
 ________________________________________  
+# ```{r Load Library}
 
 ```r
 library(ggplot2)
@@ -12,6 +13,8 @@ __________________________________________
 The following section will load data.
 
 ```r
+# ```{R LoadData}
+
 unzip(zipfile = "activity.zip")
 data <- read.csv("activity.csv")
 ```
@@ -21,11 +24,13 @@ data <- read.csv("activity.csv")
 __________________________________________
 
 ```r
+# ```{r Calualation: Mean total steps per day}
+
 total_steps_day <- tapply(data$steps,data$date, sum, na.rm = TRUE)
 qplot(total_steps_day, binwidth=1000,xlab = "total number of steps taken each day", ylab = "Frequency")
 ```
 
-![](PA1_template_files/figure-html/Calualation: Mean total steps per day-1.png)<!-- -->
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
 
 ```r
 data_mean <- mean(total_steps_day, na.rm = TRUE)
@@ -52,7 +57,9 @@ The median steps taken for each day is : 1.0395\times 10^{4}
 ### *3. What is the average daily activity pattern?*
 __________________________________________
 
+
 ```r
+# ```{r Calulation: avg daily activity pattern}
 average <- aggregate(list(steps = data$steps), by = 
                              list(interval = data$interval), FUN=mean, 
                      na.rm=TRUE)
@@ -62,7 +69,7 @@ ggplot(average, aes(interval, steps)) + geom_line(color = "blue", size = 0.7) +
              y = "Average Number of Steps Taken")
 ```
 
-![](PA1_template_files/figure-html/Calulation: avg daily activity pattern-1.png)<!-- -->
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
 
 ```r
 max <- average[which.max(average$steps),]
@@ -82,6 +89,8 @@ The interval that has the maximum number of steps is: 835
 __________________________________________
 
 ```r
+# ```{r Calculation: how many missing values}
+
 result4a <- sum(is.na(data$steps))
 ```
 
@@ -89,6 +98,8 @@ Total number of missing values is 2304.
 
 
 ```r
+# ```{r Devise a inserting strategy}
+
 insert_func <- function(interval,steps){
         if(is.na(steps)){
               average[which(average$interval==interval),"steps"]
@@ -104,6 +115,8 @@ original value.
 
 
 ```r
+# ```{r Inserting value for missing field}
+
 filled_data <- data
 filled_data$steps  <- mapply(insert_func,filled_data$interval, filled_data$steps)
 ```
@@ -112,15 +125,18 @@ Create Histogram for new total number of steps.
 
 
 ```r
+# ```{r Create histogram}
+
 totalSteps <- tapply(filled_data$steps, filled_data$date, FUN=sum)
 qplot(totalSteps, binwidth = 1000, xlab = "total number of steps taken each day")
 ```
 
-![](PA1_template_files/figure-html/Create histogram-1.png)<!-- -->
-
+![](PA1_template_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
 
 
 ```r
+# ```{r Calculating new mean and median}
+
 na_mean <- mean(totalSteps, na.rm = TRUE)  
 trunc(na_mean)
 ```
@@ -147,6 +163,7 @@ __________________________________________
 
 
 ```r
+# ```{r Inserting day column}
 filled_data$date <- as.Date(filled_data$date)
 filled_data$day <- sapply(filled_data$date, FUN= function(date) {
         if(weekdays(date) %in% c("Monday", "Tuesday", "Wednesday", 
@@ -160,13 +177,14 @@ The above code is used to insert an extra column called day into imputed dataset
 
 
 ```r
+# ```{r Calulating average steps across interval and day}
 average <- aggregate(steps ~  interval + day, data = filled_data, mean)
 ggplot(average, aes(interval, steps)) + geom_line() + 
         facet_grid(day ~ .) + xlab("5-minute interval") +
         ylab("Number of steps")
 ```
 
-![](PA1_template_files/figure-html/Calulating average steps across interval and day-1.png)<!-- -->
+![](PA1_template_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
   
   
   
